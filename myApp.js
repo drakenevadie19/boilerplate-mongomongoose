@@ -1,14 +1,69 @@
 require('dotenv').config();
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
+const personSchema = new mongoose.Schema({
+    name: String,
+    age: Number,
+    favoriteFoods: [String]
+});
 
 let Person;
 
+const person_schema = mongoose.model('Person' , personSchema);
+Person = person_schema;
+
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+  const drake = new Person({
+     name: "Drake", age: 20, favoriteFoods: ["chocolate"]
+  });
+  console.log(drake);
+  drake.save((err, savedPerson) => {
+    if (err) return done(err);
+    done(null, savedPerson);
+  });
 };
 
+const arrayOfPeople = [
+  {
+    name: "Duc Toan Nguyen",
+    age: 21,
+    favoriteFoods: ["Bun Thit Nuong", "Canh rau muong"]
+  },
+  {
+    name: "Quoc An Dinh",
+    age: 21,
+    favoriteFoods: ["Trung ran", "Canh rau muong"]
+  },
+  {
+    name: "Trong Dung Nguyen",
+    age: 21,
+    favoriteFoods: ["Deep Fries", "Xuc xich nhung deeply fries"]
+  },
+  {
+    name: "Thanh Nguyen Do",
+    age: 20,
+    favoriteFoods: ["Bun Thit Nuong", "Com Tam"]
+  },
+  {
+    name: "Trung Kien Pham",
+    age: 20,
+    favoriteFoods: ["Mi nui", "Com Tam"]
+  },
+  {
+    name: "Phuc Thao Vy Nguyen",
+    age: 19,
+    favoriteFoods: ["Bun dau mam tom", "Com Tam"]
+  },
+];
+
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+  Person.create(arrayOfPeople, (err, savedPerson) => {
+    if (err) return done(err);
+    done(null, savedPerson);
+  });
 };
 
 const findPeopleByName = (personName, done) => {
