@@ -80,19 +80,62 @@ const findOneByFood = (food, done) => {
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById({ _id: personId }, (err, people) => {
+    if (err) return done(err);
+    done(null, people);
+  });
 };
 
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
 
-  done(null /*, data*/);
+  // Find the person by ID
+  Person.findById(personId, (err, person) => {
+    if (err) {
+      return done(err);
+    }
+    if (!person) {
+      return done(new Error('Person not found'));
+    }
+
+    // Add "hamburger" to the favoriteFoods array
+    person.favoriteFoods.push(foodToAdd);
+
+    // Save the updated person document
+    person.save((err, updatedPerson) => {
+      if (err) {
+        return done(err);
+      }
+      // Return the updated person document
+      done(null, updatedPerson);
+    });
+  });
 };
 
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
 
-  done(null /*, data*/);
+  // Find the person by Name
+  Person.findOne({ name: personName }, (err, person) => {
+    if (err) {
+      return done(err);
+    }
+    if (!person) {
+      return done(new Error('Person not found'));
+    }
+
+    // Change Person's age
+    person.age = ageToSet;
+
+    // Save the updated person document
+    person.save((err, updatedPerson) => {
+      if (err) {
+        return done(err);
+      }
+      // Return the updated person document
+      done(null, updatedPerson);
+    });
+  });
 };
 
 const removeById = (personId, done) => {
