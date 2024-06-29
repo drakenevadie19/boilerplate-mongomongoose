@@ -139,19 +139,42 @@ const findAndUpdate = (personName, done) => {
 };
 
 const removeById = (personId, done) => {
-  done(null /*, data*/);
+  // Use findByIdAndRemove to find the person by ID and remove the document
+  Person.findByIdAndRemove(personId, (err, removedPerson) => {
+    if (err) {
+      return done(err);
+    }
+    // Pass the removed document to the callback
+    done(null, removedPerson);
+  });
 };
 
 const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
 
-  done(null /*, data*/);
+  Person.remove({ name: nameToRemove }, (err, result) => {
+    if (err) {
+      return done(err);
+    }
+    // Pass the result to the callback
+    done(null, result);
+  });
 };
 
 const queryChain = (done) => {
   const foodToSearch = "burrito";
-
-  done(null /*, data*/);
+  // Build up the query using chaining syntax
+  Person.find({ favoriteFoods: foodToSearch })
+    .sort('name')
+    .limit(2)
+    .select('-age')
+    .exec((err, data) => {
+      if (err) {
+        return done(err);
+      }
+      // Pass the result to the callback
+      done(null, data);
+    });
 };
 
 /** **Well Done !!**
